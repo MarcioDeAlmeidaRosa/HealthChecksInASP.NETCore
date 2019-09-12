@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Health.Checks.In.ASP.NET.Core.Infrastructure.Data.Model;
+using Health.Checks.In.ASP.NET.Core.Repositories.Interface;
+using Health.Checks.In.ASP.NET.Core.Repositories.Repository;
+using Health.Checks.In.ASP.NET.Core.Services.Interfaces;
+using Health.Checks.In.ASP.NET.Core.Services.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Health.Checks.In.ASP.NET.Core
 {
@@ -26,6 +24,14 @@ namespace Health.Checks.In.ASP.NET.Core
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.Configure<Settings>(options =>
+            {
+                options.ConnectionString = Configuration.GetSection("MongoConnection:ConnectionString").Value;
+                options.Database = Configuration.GetSection("MongoConnection:Database").Value;
+            });
+
+            services.AddTransient<IVehicleService, VehicleService>();
+            services.AddTransient<IVehicleRepository, VehicleRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
