@@ -1,0 +1,9 @@
+﻿https://medium.com/dockerbr/mongodb-no-docker-dd3b72c7efb7
+
+https://www.qappdesign.com/using-mongodb-with-net-core-webapi/
+
+https://microservices.io/patterns/observability/health-check-api.html
+
+https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2
+https://github.com/aspnet/AspNetCore.Docs/tree/master/aspnetcore/host-and-deploy/health-checks/samples/3.x/HealthChecksSample
+https://github.com/aspnet/AspNetCore.Docs/blob/master/aspnetcore/host-and-deploy/health-checks/samples/3.x/HealthChecksSample/Program.cs

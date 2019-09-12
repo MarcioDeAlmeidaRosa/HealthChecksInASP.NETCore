@@ -1,4 +1,5 @@
 ﻿using Health.Checks.In.ASP.NET.Core.Infrastructure.Data.Model;
+using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.HealthCheck;
 using Health.Checks.In.ASP.NET.Core.Repositories.Interface;
 using Health.Checks.In.ASP.NET.Core.Repositories.Repository;
 using Health.Checks.In.ASP.NET.Core.Services.Interfaces;
@@ -35,6 +36,8 @@ namespace Health.Checks.In.ASP.NET.Core
 
             //Adicionando Middleware para checar a saúde do serviço
             services.AddHealthChecks();
+            //services.AddHealthChecks().AddCheck<MemoryHealthCheck>("memory_check");
+            //services.AddHealthChecks().AddCheck<StartupHostedServiceHealthCheck>("slow_dependency_check");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,7 +57,7 @@ namespace Health.Checks.In.ASP.NET.Core
             app.UseMvc();
 
             //Adicionando endpoint para Middleware checar a saúde do serviço
-            app.UseHealthChecks("/health");
+            app.UseHealthChecks("/health", port: 8000);
         }
     }
 }
