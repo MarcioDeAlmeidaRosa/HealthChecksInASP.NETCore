@@ -32,6 +32,9 @@ namespace Health.Checks.In.ASP.NET.Core
 
             services.AddTransient<IVehicleService, VehicleService>();
             services.AddTransient<IVehicleRepository, VehicleRepository>();
+
+            //Adicionando Middleware para checar a saúde do serviço
+            services.AddHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
