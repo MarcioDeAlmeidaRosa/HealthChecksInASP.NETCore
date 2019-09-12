@@ -52,6 +52,9 @@ namespace Health.Checks.In.ASP.NET.Core
 
             app.UseHttpsRedirection();
             app.UseMvc();
+
+            //Adicionando endpoint para Middleware checar a saúde do serviço
+            app.UseHealthChecks("/health");
         }
     }
 }
