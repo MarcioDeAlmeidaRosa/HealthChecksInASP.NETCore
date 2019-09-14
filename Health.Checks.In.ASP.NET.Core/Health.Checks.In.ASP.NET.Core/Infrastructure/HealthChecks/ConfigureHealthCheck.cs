@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
 using System;
+using System.Linq;
+using System.Net.Mime;
 
 namespace Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks
 {
@@ -43,7 +46,23 @@ namespace Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks
             var options = new HealthCheckOptions
             {
                 AllowCachingResponses = false,
-                //ResponseWriter
+                ResponseWriter = async (context, report) =>
+                {
+                    var result = JsonConvert.SerializeObject(
+                        new
+                        {
+                            status = report.Status.ToString(),
+                            errors = report.Entries.Select(e =>
+                                new
+                                {
+                                    key = e.Key,
+                                    value = Enum.GetName(typeof(HealthStatus),
+                                    e.Value.Status)
+                                })
+                        });
+                    context.Response.ContentType = MediaTypeNames.Application.Json;
+                    await context.Response.WriteAsync(result);
+                }
             };
 
             options.ResultStatusCodes[HealthStatus.Unhealthy] = 424;
