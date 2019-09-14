@@ -1,8 +1,10 @@
 ﻿using Health.Checks.In.ASP.NET.Core.Infrastructure.Data.Model;
+using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks;
 using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.HealthCheck;
 using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.Services;
 using Health.Checks.In.ASP.NET.Core.IoC;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -34,11 +36,7 @@ namespace Health.Checks.In.ASP.NET.Core
             services.RegisterIoC();
 
             //Adicionando Middleware para checar a saúde do serviço
-            services.AddSingleton<StartupHostedServiceHealthCheck>();
-            services.AddHostedService<StartupHostedService>();
-            services.AddHealthChecks().AddMemoryHealthCheck("memory", thresholdInBytes: Convert.ToInt64(Configuration.GetSection("MemoryCheckOptions:Threshold").Value));
-            services.AddHealthChecks().AddCheck<StartupHostedServiceHealthCheck>("slow_dependency_check");
-            //---fim
+            services.ConfigureHealthChecks(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,7 +56,7 @@ namespace Health.Checks.In.ASP.NET.Core
             app.UseMvc();
 
             //Adicionando endpoint para Middleware checar a saúde do serviço
-            app.UseHealthChecks("/health");
+            app.UseHealthChecks();
         }
     }
 }
