@@ -22,7 +22,7 @@ namespace Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks
             services.AddHostedService<StartupHostedService>();
 
             services.AddHealthChecks()
-                .AddMemoryHealthCheck("memory",
+                .AddMemoryHealthCheck("memory_check",
                                       thresholdInBytes: Convert.ToInt64(configuration.GetSection("MemoryCheckOptions:Threshold").Value));
             services.AddHealthChecks()
                 .AddCheck<StartupHostedServiceHealthCheck>("slow_dependency_check",
@@ -30,7 +30,7 @@ namespace Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks
             services.AddHealthChecks()
                 .AddMongoDb(configuration["MongoConnection:ConnectionString"].ToString(),
                             configuration["MongoConnection:Database"].ToString(),
-                            name: "validacaoMongoDB",
+                            name: "mongoDB_check",
                             failureStatus: HealthStatus.Degraded);
 
             //Utilização do SQL server
