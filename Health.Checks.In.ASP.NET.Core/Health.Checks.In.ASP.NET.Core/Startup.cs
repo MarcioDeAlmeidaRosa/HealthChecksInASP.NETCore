@@ -33,6 +33,9 @@ namespace Health.Checks.In.ASP.NET.Core
 
             //Adicionando Middleware para checar a saúde do serviço
             services.ConfigureHealthChecks(Configuration);
+
+            //Adicionando Middleware para enviar checagem para o Elmah
+            services.ConfigureElmahChecks(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +56,9 @@ namespace Health.Checks.In.ASP.NET.Core
 
             //Adicionando endpoint para Middleware checar a saúde do serviço
             app.UseHealthChecks();
+
+            //Adicionando endpoint para Middleware enviar log ao Elmah
+            app.UseElmah();
         }
     }
 }

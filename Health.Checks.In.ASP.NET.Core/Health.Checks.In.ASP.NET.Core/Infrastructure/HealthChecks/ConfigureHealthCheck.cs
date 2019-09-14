@@ -1,4 +1,6 @@
-﻿using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.HealthCheck;
+﻿using Elmah.Io.AspNetCore.HealthChecks;
+using Elmah.Io.Client;
+using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.HealthCheck;
 using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -41,6 +43,47 @@ namespace Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks
             return services;
         }
 
+        public static IServiceCollection ConfigureElmahChecks(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<ElmahIoOptions>(configuration.GetSection("ElmahIo"));
+
+            //Adicionando Middleware para checar a saúde do serviço
+            services.AddHealthChecks()
+                .AddElmahIoPublisher(configuration.GetSection("ElmahIo:ApiKey").Value,
+                                     new Guid(configuration.GetSection("ElmahIo:LogId").Value),
+                                     "SUPORTE TI");
+
+            //services.AddElmahIo(o =>
+            //{
+            //    o.ApiKey = "API_KEY";
+            //    o.LogId = new Guid("LOG_ID");
+            //    o.OnMessage = message =>
+            //    {
+            //        message.Version = "42";
+            //    };
+            //    o.OnError = (message, exception) =>
+            //    {
+            //        logger.LogError(1, exception, "Error during log to elmah.io");
+            //    };
+            //});
+            //services.AddElmahIo();
+
+
+            //services.AddElmahIo(o =>
+            //{
+            //    o.ApiKey = configuration.GetSection("ElmahIo:ApiKey").Value;
+            //    o.LogId = new Guid(configuration.GetSection("ElmahIo:LogId").Value);
+            //});
+
+            //Configura o envio para o ElmahIo
+            services.AddHealthChecks()
+                .AddApplicationInsightsPublisher();
+
+            services.AddHealthChecksUI();
+
+            return services;
+        }
+
         public static IApplicationBuilder UseHealthChecks(this IApplicationBuilder app)
         {
             var options = new HealthCheckOptions
@@ -65,11 +108,20 @@ namespace Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks
                 }
             };
 
-            options.ResultStatusCodes[HealthStatus.Unhealthy] = 424;
-            options.ResultStatusCodes[HealthStatus.Degraded] = 424;
+            options.ResultStatusCodes[HealthStatus.Unhealthy] = 500;
+            options.ResultStatusCodes[HealthStatus.Degraded] = 500;
 
             //Adicionando endpoint para Middleware checar a saúde do serviço
             app.UseHealthChecks("/health", options);
+
+            return app;
+        }
+
+        public static IApplicationBuilder UseElmah(this IApplicationBuilder app)
+        {
+            app.UseHealthChecksUI();
+
+            //app.UseElmahIo();
 
             return app;
         }
