@@ -10,7 +10,6 @@ namespace Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.Services
     #region snippet1
     public class StartupHostedService : IHostedService, IDisposable
     {
-        private readonly int _delaySeconds = 15;
         private readonly ILogger _logger;
         private readonly StartupHostedServiceHealthCheck _startupHostedServiceHealthCheck;
 
@@ -25,11 +24,8 @@ namespace Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.Services
         {
             _logger.LogInformation($"Startup Background Service is starting.");
 
-            // Simulate the effect of a long-running startup task.
             Task.Run(async () =>
             {
-                await Task.Delay(_delaySeconds * 1000);
-
                 _startupHostedServiceHealthCheck.StartupTaskCompleted = true;
 
                 _logger.LogInformation($"Startup Background Service has started.");
