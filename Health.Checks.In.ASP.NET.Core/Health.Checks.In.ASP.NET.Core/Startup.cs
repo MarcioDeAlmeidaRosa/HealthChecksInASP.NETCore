@@ -1,15 +1,11 @@
 ﻿using Health.Checks.In.ASP.NET.Core.Infrastructure.Data.Model;
 using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks;
-using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.HealthCheck;
-using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.Services;
 using Health.Checks.In.ASP.NET.Core.IoC;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace Health.Checks.In.ASP.NET.Core
 {
