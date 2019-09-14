@@ -1,10 +1,7 @@
 ﻿using Health.Checks.In.ASP.NET.Core.Infrastructure.Data.Model;
 using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.HealthCheck;
 using Health.Checks.In.ASP.NET.Core.Infrastructure.HealthChecks.Services;
-using Health.Checks.In.ASP.NET.Core.Repositories.Interface;
-using Health.Checks.In.ASP.NET.Core.Repositories.Repository;
-using Health.Checks.In.ASP.NET.Core.Services.Interfaces;
-using Health.Checks.In.ASP.NET.Core.Services.Service;
+using Health.Checks.In.ASP.NET.Core.IoC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -33,18 +30,13 @@ namespace Health.Checks.In.ASP.NET.Core
                 options.Database = Configuration.GetSection("MongoConnection:Database").Value;
             });
 
-            services.Configure<MemoryCheckOptions>(name: "MemoryCheckOptions",  options =>
-            {
-                options.Threshold = Convert.ToInt64(Configuration.GetSection("MemoryCheckOptions:Threshold").Value);
-            });
-
-            services.AddTransient<IVehicleService, VehicleService>();
-            services.AddTransient<IVehicleRepository, VehicleRepository>();
+            //Adicionando Middleware para registrar a injeção de dependência
+            services.RegisterIoC();
 
             //Adicionando Middleware para checar a saúde do serviço
             services.AddSingleton<StartupHostedServiceHealthCheck>();
             services.AddHostedService<StartupHostedService>();
-            services.AddHealthChecks().AddMemoryHealthCheck("MemoryCheckOptions");
+            services.AddHealthChecks().AddMemoryHealthCheck("memory", thresholdInBytes: Convert.ToInt64(Configuration.GetSection("MemoryCheckOptions:Threshold").Value));
             services.AddHealthChecks().AddCheck<StartupHostedServiceHealthCheck>("slow_dependency_check");
             //---fim
         }
