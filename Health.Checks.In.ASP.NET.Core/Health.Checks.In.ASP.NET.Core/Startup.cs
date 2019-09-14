@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Health.Checks.In.ASP.NET.Core
 {
@@ -32,13 +33,18 @@ namespace Health.Checks.In.ASP.NET.Core
                 options.Database = Configuration.GetSection("MongoConnection:Database").Value;
             });
 
+            services.Configure<MemoryCheckOptions>(name: "MemoryCheckOptions",  options =>
+            {
+                options.Threshold = Convert.ToInt64(Configuration.GetSection("MemoryCheckOptions:Threshold").Value);
+            });
+
             services.AddTransient<IVehicleService, VehicleService>();
             services.AddTransient<IVehicleRepository, VehicleRepository>();
 
             //Adicionando Middleware para checar a saúde do serviço
             services.AddSingleton<StartupHostedServiceHealthCheck>();
             services.AddHostedService<StartupHostedService>();
-            services.AddHealthChecks().AddMemoryHealthCheck("memory_check");
+            services.AddHealthChecks().AddMemoryHealthCheck("MemoryCheckOptions");
             services.AddHealthChecks().AddCheck<StartupHostedServiceHealthCheck>("slow_dependency_check");
             //---fim
         }
@@ -60,7 +66,7 @@ namespace Health.Checks.In.ASP.NET.Core
             app.UseMvc();
 
             //Adicionando endpoint para Middleware checar a saúde do serviço
-            app.UseHealthChecks("/health");//, port: 8000);
+            app.UseHealthChecks("/health");
         }
     }
 }
